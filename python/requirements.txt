@@ -1,3 +1,9 @@
-# PDF -> DOCX conversion engine.
-# Installed directly from the pinned GitHub source that was verified to work.
-pdf2docx-plus @ git+https://github.com/mithunvoe/pdf2docx-plus.git
+# PDF -> DOCX conversion is handled by LibreOffice in headless mode, invoked as
+# a system binary (soffice) from converter.py. There are no Python package
+# dependencies for the converter itself.
+#
+# System requirements (install on the server, NOT via pip):
+#   - LibreOffice (provides the `soffice` binary)
+#   - Indic/Unicode fonts so all scripts render correctly (e.g. Noto or Lohit)
+#
+# See backend/README.md for the exact install commands.
