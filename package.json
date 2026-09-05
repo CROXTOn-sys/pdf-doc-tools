@@ -2,7 +2,7 @@
   "name": "pdfmesh-backend",
   "version": "1.0.0",
   "private": true,
-  "description": "PDFmesh backend API — PDF to DOCX conversion using LibreOffice headless",
+  "description": "PDFmesh backend API — PDF to DOCX conversion (pdf2docx-plus primary, LibreOffice fallback)",
   "type": "commonjs",
   "main": "src/server.js",
   "scripts": {

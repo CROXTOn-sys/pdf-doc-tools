@@ -1,9 +1,10 @@
-# PDF -> DOCX conversion is handled by LibreOffice in headless mode, invoked as
-# a system binary (soffice) from converter.py. There are no Python package
-# dependencies for the converter itself.
-#
-# System requirements (install on the server, NOT via pip):
-#   - LibreOffice (provides the `soffice` binary)
-#   - Indic/Unicode fonts so all scripts render correctly (e.g. Noto or Lohit)
-#
-# See backend/README.md for the exact install commands.
+# Primary PDF -> DOCX engine (best layout/table/image reconstruction).
+# Installed from the pinned GitHub source that was verified to work.
+pdf2docx-plus @ git+https://github.com/mithunvoe/pdf2docx-plus.git
+
+# PyMuPDF (fitz) is used to detect Indic scripts for engine selection. It is
+# normally installed as a dependency of pdf2docx-plus; listed here to be safe.
+PyMuPDF
+
+# NOTE: LibreOffice is ALSO required as a system package (not pip). It is used
+# as the fallback engine for Indic-language PDFs. See backend/README.md.

@@ -4,22 +4,38 @@ Node.js + Express API that converts PDF files to DOCX. The heavy conversion is
 performed by **LibreOffice in headless mode**, invoked from
 `python/converter.py`.
 
-## Conversion engine
+## Conversion engine (two-engine strategy)
 
 - Endpoint: `POST /api/pdf-to-docx` (multipart form field: `file`).
 - The Node layer writes the upload to a temp file and runs:
   `python converter.py <input_pdf> <output_docx>`
-- `converter.py` calls LibreOffice (`soffice --headless --convert-to docx ...`).
 
-LibreOffice uses a full text-shaping engine (HarfBuzz), so it correctly
-preserves complex Indic scripts (Telugu, Hindi, Kannada, Tamil, Marathi, ...)
-and other Unicode text. This replaced the previous `pdf2docx-plus` engine, which
-scrambled complex-script text.
+`converter.py` chooses the best engine per file:
 
-`converter.py` uses only the Python standard library — there are **no pip
-packages** to install for conversion. The Python interpreter is still resolved
-from `backend/python/venv` (or the `PYTHON_BIN` env override), so keep the venv
-in place; it just runs the script.
+- **Primary — `pdf2docx-plus`**: reconstructs tables, images and block layout,
+  so the DOCX closely matches the source PDF. Used for the common case
+  (mostly-English / mixed-content documents). Best layout fidelity.
+- **Fallback — LibreOffice headless**: used when the PDF contains complex Indic
+  scripts (Telugu, Hindi/Marathi, Kannada, Tamil, ...), where `pdf2docx` garbles
+  characters. LibreOffice shapes those scripts correctly. Also used if
+  `pdf2docx` fails for any reason.
+
+Script detection uses PyMuPDF (`fitz`), which ships with `pdf2docx-plus`.
+
+Requirements:
+
+- The Python interpreter is resolved from `backend/python/venv` (or the
+  `PYTHON_BIN` env override) — keep the venv in place.
+- Install `pdf2docx-plus` (and PyMuPDF) into the venv (pip).
+- Keep **LibreOffice** installed as a system package for the fallback path.
+
+### Reinstall the pip engine (in the venv)
+
+```bash
+# Linux
+backend/python/venv/bin/pip install \
+  "pdf2docx-plus @ git+https://github.com/mithunvoe/pdf2docx-plus.git" PyMuPDF
+```
 
 ## Server requirements
 
